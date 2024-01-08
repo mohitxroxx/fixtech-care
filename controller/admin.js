@@ -36,17 +36,22 @@ app.post("/login",async (req, res) => {
         const expiresIn = rememberMe ? '7d' : '2h';         
             const token = jwt.sign({ id: user.id, username: user.username }, TOKEN_KEY,{expiresIn})
         res.cookie('jwt', token, {
-            httpOnly: true,
-            maxAge: expiresIn === '7d' ? 7 * 24 * 60 *60 * 1000 : 2 * 60 * 60 * 1000,
+            secure: true,
+            maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
+            httpOnly: true
         })
-        res.json({ token })
+        res.json({ 
+            msg: 'Login successful',
+            status: true
+        })
     } catch (err) {
         console.log(err);
+        res.status(500).json({ msg: 'Server error', status: false })
     }
 });
 
 app.get("/home", auth, (req,res) => {
-    res.status(200).send("Welcome");
+    res.status(200).send("User Logged in and Session is Active")
 })
 
 module.exports = app;

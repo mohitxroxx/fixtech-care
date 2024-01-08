@@ -36,17 +36,22 @@ app.post("/login",async (req, res) => {
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000: 2 * 60 * 60 * 1000,
         })
         res.cookie('refid', refid, {
+            secure: true,
             httpOnly: true,
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000: 2 * 60 * 60 * 1000,
         })
-        res.json({ token })
+        res.json({ 
+            msg: 'Login successful',
+            status: true
+        })
     } catch (err) {
-        console.log(err);
+        console.log(err)
+        res.status(500).json({ msg: 'Server error', status: false })
     }
 });
 
 app.get("/home", auth, (req,res) => {
-    res.status(200).send("Welcome");
+    res.status(200).send("User Logged in and Session is Active")
 })
 
 app.get("/user",async(req,res)=>{
