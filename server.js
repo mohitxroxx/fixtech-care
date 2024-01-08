@@ -20,8 +20,15 @@ app.use(
   })
 )
 
+
+app.get("/",(req,res) => {
+  res.status(200).send("Server up and running")
+})
+
 app.use("/admin", admin)
 app.use("/partner",partner)
+
+
 
   app.listen(process.env.PORT, () =>
   console.log(`SERVER UP and running at ${process.env.PORT}`)
