@@ -1,7 +1,6 @@
 const express=require('express')
 const cors=require('cors')
 const session = require('express-session')
-const auth = require("./routes/auth")
 const admin = require("./routes/admin")
 const partner = require("./routes/partner")
 const connectDB = require('./config/db')
@@ -9,8 +8,8 @@ connectDB()
 
 const app=express()
 
-app.use(cors());
-app.use(express.json());
+app.use(cors())
+app.use(express.json())
 
 app.use(
   session({
@@ -21,7 +20,6 @@ app.use(
   })
 )
 
-app.use("/auth", auth)
 app.use("/admin", admin)
 app.use("/partner",partner)
 
