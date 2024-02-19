@@ -186,10 +186,10 @@ app.post("/icon", auth, async (req, res) => {
         return res.status(400).send("failed to update")
     }
 })
-app.get("/user", auth, async (req, res) => {
+app.post("/user", auth, async (req, res) => {
     try {
-        const refid = req.cookies.refid
-        const user = await User.findOne({ refid })
+        const {refid} = req.body
+        const user = await User.findOne({ refid:refid })
         return res.status(200).send(user)
     } catch (error) {
         return res.status(400).send("failed to fetch")

@@ -19,6 +19,6 @@ router.post('/referral', referral)
 router.post('/commission', commission)
 router.get('/notify', notify)
 router.post('/icon', icon)
-router.get('/user', user)
+router.post('/user', user)
 
 module.exports = router
