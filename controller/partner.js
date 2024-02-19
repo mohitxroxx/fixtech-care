@@ -118,10 +118,14 @@ app.post("/login", async (req, res) => {
         return res.status(200).cookie('jwt', token, {
             httpOnly: true,
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
-            secure: true,
+            secure: false,
+            // secure: true,
+            sameSite: 'None',
         }).cookie('refid', refid, {
-            secure: true,
+            secure: false,
+            // secure: true,
             httpOnly: true,
+            sameSite: 'None',
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
         }).json({
             msg: 'Login successful',
