@@ -8,7 +8,10 @@ connectDB()
 
 const app=express()
 
-app.use(cors())
+app.use(cors({
+  origin:'*',
+  credentials:true
+}))
 app.use(express.json())
 
 app.use(
@@ -30,6 +33,5 @@ app.use("/partner",partner)
 
 
 
-  app.listen(process.env.PORT, () =>
-  console.log(`SERVER UP and running at ${process.env.PORT}`)
-)
+app.listen(process.env.PORT, () =>
+  console.log(`SERVER UP and running at ${process.env.PORT}`))

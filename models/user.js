@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema({
     type:String,
     required:true,
   },
+  icon:{
+    type:String,
+    default:""
+  },
   zip:{
     type:String,
     min:4,
@@ -70,37 +74,4 @@ const userSchema = new mongoose.Schema({
 })
 
 
-module.exports = mongoose.model("Registered user", userSchema)
-
-
-
-// const mongoose = require('mongoose');
-
-// const userSchema = new mongoose.Schema({
-//   country: String,
-//   category: String,
-//   email: {
-//     type: String,
-//     unique: true,
-//   },
-//   fname: String,
-//   mname: String,
-//   lname: String,
-//   bname: String,
-//   contact: String,
-//   city: String,
-//   state: String,
-//   zip: String,
-//   refcount: {
-//     type: Number,
-//     default: 0,
-//   },
-//   refid: {
-//     type: String,
-//     unique: true,
-//   }
-// });
-
-// const User = mongoose.model('User', userSchema);
-
-// module.exports = User;
+module.exports = mongoose.model("Channel Partner", userSchema)
