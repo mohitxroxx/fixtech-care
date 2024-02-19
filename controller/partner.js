@@ -162,7 +162,7 @@ app.get("/home", auth, (req, res) => {
     res.status(200).send("User Logged in and Session is Active")
 })
 
-app.post("/upload", auth, async (req, res) =>
+app.post("/upload", async (req, res) =>
     upload.single('image')(req, res, function (err) {
         if (err) {
             console.log(err)
@@ -178,7 +178,7 @@ app.post("/upload", auth, async (req, res) =>
     })
 )
 
-app.post("/icon", auth, async (req, res) => {
+app.post("/icon", async (req, res) => {
     try {
         const existing = await User.findOneAndUpdate({ refid: req.cookies.refid }, { icon: req.body.icon }, { new: true })
         return res.status(200).send("Updated Successfully")
@@ -186,17 +186,17 @@ app.post("/icon", auth, async (req, res) => {
         return res.status(400).send("failed to update")
     }
 })
-app.post("/user", auth, async (req, res) => {
+app.post("/user", async (req, res) => {
     try {
         const {refid} = req.body
         const user = await User.findOne({ refid:refid })
-        return res.status(200).send(user)
+        return res.status(200).json(user)
     } catch (error) {
         return res.status(400).send("failed to fetch")
     }
 })
 
-app.post("/referral", auth, async (req, res) => {
+app.post("/referral", async (req, res) => {
     try {
         const { refid } = req.body
         const chk = await referral.find({ refid: refid })
@@ -208,7 +208,7 @@ app.post("/referral", auth, async (req, res) => {
         res.status(500).json({ msg: 'Cant find appropriate data', status: false })
     }
 })
-app.post("/commission", auth, async (req, res) => {
+app.post("/commission", async (req, res) => {
     try {
         const { refid } = req.body
         const chk = await referral.find({ refid: refid })
@@ -221,7 +221,7 @@ app.post("/commission", auth, async (req, res) => {
     }
 })
 
-app.get("/notify", auth, async (req, res) => {
+app.get("/notify", async (req, res) => {
     try {
         const refid = req.cookies.refid
         const msg = await message.find({ refid })
