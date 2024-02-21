@@ -207,8 +207,8 @@ app.post("/commission", auth, async (req, res) => {
     try {
         const { refid } = req.body
         const chk = await referral.find({ refid: refid })
-        if (chk.length == 0)
-            return res.status(400).json({ "msg": "No data found" })
+        // if (chk.length == 0)
+        //     return res.status(400).json({ "msg": "No data found" })
         return res.status(200).json(chk)
     } catch (err) {
         console.log(err)
