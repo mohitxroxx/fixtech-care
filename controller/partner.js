@@ -111,13 +111,13 @@ app.post("/login", async (req, res) => {
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
             // secure: false,
             // secure: true,
-            // sameSite: 'None',
+            sameSite: 'None',
         }).cookie('refid', refid, {
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
             httpOnly: false,
             // secure: false,
             // secure: true,
-            // sameSite: 'None',
+            sameSite: 'None',
         }).json({
             msg: 'Login successful',
             status: true
