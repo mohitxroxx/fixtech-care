@@ -106,44 +106,22 @@ app.post("/login", async (req, res) => {
         }
         const expiresIn = rememberMe ? '7d' : '2h'
         const token = jwt.sign({ id: user._id, refid }, TOKEN_KEY, { expiresIn })
-        // res.cookie('jwt', token, {
-        //     httpOnly: true,
-        //     maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
-        // })
-        // res.cookie('refid', refid, {
-        //     secure: true,
-        //     httpOnly: true,
-        //     maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
-        // })
         return res.status(200).cookie('jwt', token, {
-            httpOnly: true,
+            httpOnly: false,
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
             // secure: false,
-            secure: true,
-            sameSite: 'None',
+            // secure: true,
+            // sameSite: 'None',
         }).cookie('refid', refid, {
             // secure: false,
-            secure: true,
-            httpOnly: true,
-            sameSite: 'None',
+            // secure: true,
+            httpOnly: false,
+            // sameSite: 'None',
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
         }).json({
             msg: 'Login successful',
             status: true
         })
-        // res.cookie('jwt', token, {
-        //     httpOnly: true,
-        //     maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
-        // })
-        // res.cookie('refid', refid, {
-        //     secure: true,
-        //     httpOnly: true,
-        //     maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
-        // })
-        // res.status(200).json({
-        //     msg: 'Login successful',
-        //     status: true
-        // })
     } catch (err) {
         console.log(err)
         res.status(500).json({ msg: 'Server error', status: false })
@@ -195,6 +173,23 @@ app.post("/user", auth, async (req, res) => {
         return res.status(400).send("failed to fetch")
     }
 })
+app.patch("/user", auth, async (req, res) => {
+    try {
+        const {refid,category,bname,email,fname,lname,contact,city,state,zip} = req.body;
+        const user = await User.findOneAndUpdate(
+            { refid: refid },
+            { $set: { category, bname, email, fname, lname, contact, city, state, zip } },
+            { new: true, runValidators: true }
+        );
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        return res.status(200).json(user);
+    } catch (error) {
+        console.error(error)
+        return res.status(400).send("Failed to update");
+    }
+});
 
 app.post("/referral", auth, async (req, res) => {
     try {

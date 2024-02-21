@@ -20,5 +20,6 @@ router.post('/commission', commission)
 router.get('/notify', notify)
 router.post('/icon', icon)
 router.post('/user', user)
+router.patch('/user', user)
 
 module.exports = router
