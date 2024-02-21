@@ -95,7 +95,7 @@ app.post("/login", async (req, res) => {
     try {
         const { refid, rememberMe } = req.body
 
-        if (!refid || !rememberMe) {
+        if (!refid) {
             return res.json({ msg: 'Please fill the login details completely', status: false })
         }
 
@@ -108,16 +108,16 @@ app.post("/login", async (req, res) => {
         const token = jwt.sign({ id: user._id, refid }, TOKEN_KEY, { expiresIn })
         return res.status(200).cookie('jwt', token, {
             httpOnly: false,
-            expires: new Date(Date.now() + 7*86400000 ),
+            maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
             // secure: false,
             // secure: true,
             // sameSite: 'None',
         }).cookie('refid', refid, {
+            maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
+            httpOnly: false,
             // secure: false,
             // secure: true,
-            httpOnly: false,
             // sameSite: 'None',
-            expires: new Date(Date.now() + 7*86400000 ),
         }).json({
             msg: 'Login successful',
             status: true
