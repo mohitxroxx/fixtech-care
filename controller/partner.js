@@ -108,7 +108,7 @@ app.post("/login", async (req, res) => {
         const token = jwt.sign({ id: user._id, refid }, TOKEN_KEY, { expiresIn })
         return res.status(200).cookie('jwt', token, {
             httpOnly: false,
-            expires: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
+            expires: new Date(Date.now() + 86400000 ),
             // secure: false,
             // secure: true,
             // sameSite: 'None',
@@ -117,8 +117,7 @@ app.post("/login", async (req, res) => {
             // secure: true,
             httpOnly: false,
             // sameSite: 'None',
-            expires: new Date(Date.now() + 25892000),
-            // maxage: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
+            expires: new Date(Date.now() + 86400000 ),
         }).json({
             msg: 'Login successful',
             status: true
