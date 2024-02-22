@@ -7,8 +7,10 @@ const referral = require('../controller/partner')
 const commission = require('../controller/partner')
 const notify = require('../controller/partner')
 const user = require('../controller/partner')
+const payout = require('../controller/partner')
 const icon = require('../controller/partner')
 const register = require('../controller/partner')
+const mail = require('../controller/partner')
 
 
 router.post('/register', register)
@@ -19,7 +21,9 @@ router.post('/referral', referral)
 router.post('/commission', commission)
 router.get('/notify', notify)
 router.post('/icon', icon)
+router.post('/payout', payout)
 router.post('/user', user)
 router.patch('/user', user)
+router.post('/mail', mail)
 
 module.exports = router

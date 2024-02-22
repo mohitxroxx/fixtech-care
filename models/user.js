@@ -70,6 +70,50 @@ const userSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date, default: Date.now
+  },
+  paymenttype: {
+    type: String, 
+    default: ""
+  },
+  accountName: {
+    type: String, 
+    default: ""
+  },
+  accountNum: {
+    type: String, 
+    default: ""
+  },
+  bankName: {
+    type: String, 
+    default: ""
+  },
+  bankAddress: {
+    type: String, 
+    default: ""
+  },
+  swiftCode: {
+    type: String, 
+    default: ""
+  },
+  ifsc: {
+    type: String, 
+    default: ""
+  },
+  mobileNum: {
+    type: String, 
+    default: ""
+  },
+  address: {
+    type: String, 
+    default: ""
+  },
+  paypalDetail: {
+    type: String, 
+    default: ""
+  },
+  paymentLink: {
+    type: String, 
+    default: ""
   }
 })
 

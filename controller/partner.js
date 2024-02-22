@@ -109,7 +109,6 @@ app.post("/login", async (req, res) => {
         return res.status(200).cookie('jwt', token, {
             httpOnly: false,
             maxAge: expiresIn === '7d' ? 7 * 24 * 60 * 60 * 1000 : 2 * 60 * 60 * 1000,
-            // secure: false,
             secure: true,
             sameSite: 'None',
         }).cookie('refid', refid, {
@@ -129,9 +128,9 @@ app.post("/login", async (req, res) => {
 })
 app.get("/logout", async (req, res) => {
     try {
-        res.clearCookie('jwt')
-        res.clearCookie('refid')
-        res.status(200).send("User Logged out and session ended")
+        res.clearCookie('jwt', { secure: true, httpOnly: false, sameSite: 'None' });
+        res.clearCookie('refid', { secure: true, httpOnly: false, sameSite: 'None' });
+        return res.status(200).json({msg:"User Logged out and session ended"})
     } catch (ex) {
         next(ex)
     }
@@ -207,14 +206,48 @@ app.post("/commission", auth, async (req, res) => {
     try {
         const { refid } = req.body
         const chk = await referral.find({ refid: refid })
-        // if (chk.length == 0)
-        //     return res.status(400).json({ "msg": "No data found" })
+        if (chk.length == 0)
+            return res.status(400).json({ "msg": "No data found" })
         return res.status(200).json(chk)
     } catch (err) {
         console.log(err)
         res.status(500).json({ msg: 'Cant find appropriate data', status: false })
     }
 })
+
+app.post('/payout',auth, async (req, res) => {
+    const { refid,paymenttype, accountName, accountNum, bankName, bankAddress, swiftCode, ifsc, mobileNum, address, paypalDetail, paymentLink } = req.body;
+    console.log(refid)
+    try {
+        const user = await User.findOneAndUpdate(
+            { refid: refid },
+            { 
+                $set: { 
+                    paymenttype: paymenttype, 
+                    accountName: accountName, 
+                    accountNum: accountNum, 
+                    bankName: bankName, 
+                    bankAddress: bankAddress, 
+                    swiftCode: swiftCode, 
+                    ifsc: ifsc, 
+                    mobileNum: mobileNum, 
+                    address: address, 
+                    paypalDetail: paypalDetail, 
+                    paymentLink: paymentLink 
+                } 
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating payment info', error: error.toString() });
+    }
+});
 
 app.get("/notify", auth, async (req, res) => {
     try {
@@ -226,4 +259,41 @@ app.get("/notify", auth, async (req, res) => {
         res.status(500).json({ msg: 'Cant find appropriate data', status: false })
     }
 })
+
+app.post('/mail', upload.single('file'), (req, res) => {
+    const { subject, type, description, otherType } = req.body;
+    const file = req.file;
+  
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: SMTP_EMAIL,
+        pass: SMTP_PASS,
+      }
+    });
+  
+    let mailOptions = {
+      from: SMTP_EMAIL,
+      to: 'partner@fixtechcare.com',
+      subject: subject,
+      text: `Type: ${type}\nDescription: ${description}\nOther Type: ${otherType}`,
+      attachments: [
+        {
+          filename: file.originalname,
+          path: file.path
+        }
+      ]
+    };
+  
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  
+    return res.status(200).json({ message: 'Mail sent' });
+  });
+
 module.exports = app
