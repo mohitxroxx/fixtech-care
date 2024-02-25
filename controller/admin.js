@@ -71,7 +71,7 @@ app.post("/list", auth, async (req, res) => {
         res.status(500).json({ msg: 'Cant find appropriate data', status: false })
     }
 })
-app.get("/referral",auth,async(req,res)=>{
+app.post("/referrals",auth,async(req,res)=>{
     try {
         const { country } = req.body
         const data = await referral.find({ country: country })
@@ -81,7 +81,7 @@ app.get("/referral",auth,async(req,res)=>{
         res.status(500).json({ msg: 'Cant find appropriate data', status: false })
     }
 })
-app.post("/referral", auth, async (req, res) => {
+app.post("/editreferral", auth, async (req, res) => {
     try {
         const { refid, createdAt, name, type, category } = req.body
         if (!createdAt || !name || !type || !category)
