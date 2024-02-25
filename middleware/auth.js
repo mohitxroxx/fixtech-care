@@ -4,7 +4,7 @@ const config = process.env
 
 const verifyToken = (req, res, next) => {
     const token = req.body.token || req.query.token || req.headers["x-access-token"] || req.cookies.jwt
-    console.log(token)
+    // console.log(token)
     if (!token) {
 
         return res.status(403).send("Session Expired Login again to continue")

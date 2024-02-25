@@ -71,9 +71,12 @@ app.post("/list", auth, async (req, res) => {
         res.status(500).json({ msg: 'Cant find appropriate data', status: false })
     }
 })
-app.get("/referrals",auth,async(req,res)=>{
+app.post("/referrals",auth,async(req,res)=>{
+    const {refid}=req.body
     try {
-        const data = await referral.find({})
+        const data = await referral.find({refid:refid})
+        if(!data)
+        res.status(500).json({ msg: 'Cant find appropriate data', status: false })
         res.status(200).json({ data })
     } catch (err) {
         console.log(err)
