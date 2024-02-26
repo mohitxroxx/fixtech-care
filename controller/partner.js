@@ -120,7 +120,7 @@ app.post("/login", async (req, res) => {
         }).json({
             msg: 'Login successful',
             status: true,
-            name:fname
+            name:user.fname
         })
     } catch (err) {
         console.log(err)
