@@ -134,7 +134,20 @@ app.post("/notify", auth, async (req, res) => {
     }
 })
 
-
+app.post("/notifyall", auth, async (req, res) => {
+    try {
+        const { msg } = req.body
+        if (!msg)
+            return res.status(400).json('Please fill all the required fields')
+        const data=await User.find({})
+        for(let user of data)
+            await message.create({ refid:user.refid, msg })
+        return res.status(200).json({ "msg": "notified everyone successfully" })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ msg: 'Cant find appropriate data', status: false })
+    }
+})
 
 app.get("/home", auth, (req, res) => {
     res.status(200).send("User Logged in and Session is Active")

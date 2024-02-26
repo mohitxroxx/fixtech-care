@@ -7,7 +7,9 @@ const editreferral = require('../controller/admin')
 const referrals = require('../controller/admin')
 const commission = require('../controller/admin')
 const notify = require('../controller/admin')
+const notifyall = require('../controller/admin')
 const home = require('../controller/admin')
+
 
 router.post('/login', login)
 router.get('/logout', logout)
@@ -17,5 +19,6 @@ router.post('/editreferral', editreferral)
 router.post('/commission', commission)
 router.post('/notify', notify)
 router.get('/home', home)
+router.post('/notifyall', notifyall)
 
 module.exports = router

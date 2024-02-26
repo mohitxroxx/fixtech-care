@@ -119,7 +119,8 @@ app.post("/login", async (req, res) => {
             sameSite: 'None',
         }).json({
             msg: 'Login successful',
-            status: true
+            status: true,
+            name:fname
         })
     } catch (err) {
         console.log(err)
@@ -265,7 +266,9 @@ app.post('/mail', upload.single('file'), (req, res) => {
     const file = req.file;
   
     let transporter = nodemailer.createTransport({
-      service: 'gmail',
+        host: 'fixtechcare.com',
+        port:465,
+        secure:true,
       auth: {
         user: SMTP_EMAIL,
         pass: SMTP_PASS,
