@@ -129,8 +129,8 @@ app.post("/login", async (req, res) => {
 })
 app.get("/logout", async (req, res) => {
     try {
-        res.clearCookie('jwt', { secure: true, httpOnly: false, sameSite: 'None' });
-        res.clearCookie('refid', { secure: true, httpOnly: false, sameSite: 'None' });
+        res.cookie('jwt', '', { maxAge: 0, httpOnly: false, secure: true, sameSite: 'None' });
+        res.cookie('refid', '', { maxAge: 0, httpOnly: false, secure: true, sameSite: 'None' });
         return res.status(200).json({msg:"User Logged out and session ended"})
     } catch (ex) {
         next(ex)
