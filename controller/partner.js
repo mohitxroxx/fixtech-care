@@ -120,7 +120,7 @@ app.post("/login", async (req, res) => {
         }).json({
             msg: 'Login successful',
             status: true,
-            name:user.fname
+            name: user.fname
         })
     } catch (err) {
         console.log(err)
@@ -131,7 +131,7 @@ app.get("/logout", async (req, res) => {
     try {
         res.cookie('jwt', '', { maxAge: 0, httpOnly: false, secure: true, sameSite: 'None' });
         res.cookie('refid', '', { maxAge: 0, httpOnly: false, secure: true, sameSite: 'None' });
-        return res.status(200).json({msg:"User Logged out and session ended"})
+        return res.status(200).json({ msg: "User Logged out and session ended" })
     } catch (ex) {
         next(ex)
     }
@@ -166,8 +166,8 @@ app.post("/icon", auth, async (req, res) => {
 })
 app.post("/user", auth, async (req, res) => {
     try {
-        const {refid} = req.body
-        const user = await User.findOne({ refid:refid })
+        const { refid } = req.body
+        const user = await User.findOne({ refid: refid })
         return res.status(200).json(user)
     } catch (error) {
         return res.status(400).send("failed to fetch")
@@ -175,7 +175,7 @@ app.post("/user", auth, async (req, res) => {
 })
 app.patch("/user", auth, async (req, res) => {
     try {
-        const {refid,category,bname,email,fname,lname,contact,city,state,zip} = req.body;
+        const { refid, category, bname, email, fname, lname, contact, city, state, zip } = req.body;
         const user = await User.findOneAndUpdate(
             { refid: refid },
             { $set: { category, bname, email, fname, lname, contact, city, state, zip } },
@@ -216,26 +216,26 @@ app.post("/commission", auth, async (req, res) => {
     }
 })
 
-app.post('/payout',auth, async (req, res) => {
-    const { refid,paymenttype, accountName, accountNum, bankName, bankAddress, swiftCode, ifsc, mobileNum, address, paypalDetail, paymentLink } = req.body;
+app.post('/payout', auth, async (req, res) => {
+    const { refid, paymenttype, accountName, accountNum, bankName, bankAddress, swiftCode, ifsc, mobileNum, address, paypalDetail, paymentLink } = req.body;
     console.log(refid)
     try {
         const user = await User.findOneAndUpdate(
             { refid: refid },
-            { 
-                $set: { 
-                    paymenttype: paymenttype, 
-                    accountName: accountName, 
-                    accountNum: accountNum, 
-                    bankName: bankName, 
-                    bankAddress: bankAddress, 
-                    swiftCode: swiftCode, 
-                    ifsc: ifsc, 
-                    mobileNum: mobileNum, 
-                    address: address, 
-                    paypalDetail: paypalDetail, 
-                    paymentLink: paymentLink 
-                } 
+            {
+                $set: {
+                    paymenttype: paymenttype,
+                    accountName: accountName,
+                    accountNum: accountNum,
+                    bankName: bankName,
+                    bankAddress: bankAddress,
+                    swiftCode: swiftCode,
+                    ifsc: ifsc,
+                    mobileNum: mobileNum,
+                    address: address,
+                    paypalDetail: paypalDetail,
+                    paymentLink: paymentLink
+                }
             },
             { new: true, runValidators: true }
         );
@@ -262,41 +262,47 @@ app.get("/notify", auth, async (req, res) => {
 })
 
 app.post('/mail', upload.single('file'), (req, res) => {
-    const { subject, type, description, otherType } = req.body;
-    const file = req.file;
-  
-    let transporter = nodemailer.createTransport({
-        host: 'fixtechcare.com',
-        port:465,
-        secure:true,
-      auth: {
-        user: SMTP_EMAIL,
-        pass: SMTP_PASS,
-      }
-    });
-  
-    let mailOptions = {
-      from: SMTP_EMAIL,
-      to: 'partner@fixtechcare.com',
-      subject: subject,
-      text: `Type: ${type}\nDescription: ${description}\nOther Type: ${otherType}`,
-      attachments: [
-        {
-          filename: file.originalname,
-          path: file.path
-        }
-      ]
-    };
-  
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
-  
-    return res.status(200).json({ message: 'Mail sent' });
-  });
+    try {
+        const { subject, type, description, otherType } = req.body;
+        const file = req.file;
+
+        let transporter = nodemailer.createTransport({
+            host: 'fixtechcare.com',
+            port:465,
+            secure: true,
+            auth: {
+                user: SMTP_EMAIL,
+                pass: SMTP_PASS,
+            }
+        });
+
+        let mailOptions = {
+            from: SMTP_EMAIL,
+            to: SMTP_EMAIL,
+            subject: subject,
+            text: `Type: ${type}\nDescription: ${description}\nOther Type: ${otherType}`,
+            attachments: [
+                {
+                    filename: file.originalname,
+                    path: file.path
+                }
+            ]
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+
+        return res.status(200).json({ message: 'Mail sent' });
+    } 
+     catch (error) {
+        console.error(error)
+    return res.status(400).json({ message: 'Mail not sent' });
+
+}})
 
 module.exports = app
