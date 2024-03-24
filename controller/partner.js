@@ -37,7 +37,7 @@ app.post('/register', async (req, res) => {
             country, category, email, fname, mname, lname, bname, contact, city, state, zip
         } = req.body
 
-        if (!country || !category || !email || !fname || !mname || !lname || !bname || !contact || !city || !state || !zip) {
+        if (!country || !category || !email || !fname || !lname || !bname || !contact || !city || !state || !zip) {
             return res.status(400).json({ msg: 'Please fill the form completely', status: false })
         }
 
