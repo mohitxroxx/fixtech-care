@@ -21,7 +21,9 @@ dotenv.config()
 const { TOKEN_KEY, SMTP_EMAIL, SMTP_PASS } = process.env
 
 let transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    host: 'fixtechcare.com',
+    port:465,
+    secure:true,
     auth: {
         user: SMTP_EMAIL,
         pass: SMTP_PASS,
@@ -261,48 +263,41 @@ app.get("/notify", auth, async (req, res) => {
     }
 })
 
+
 app.post('/mail', upload.single('file'), (req, res) => {
-    try {
-        const { subject, type, description, otherType } = req.body;
-        const file = req.file;
-
-        let transporter = nodemailer.createTransport({
-            host: 'fixtechcare.com',
-            port:465,
-            secure: true,
-            auth: {
-                user: SMTP_EMAIL,
-                pass: SMTP_PASS,
-            }
-        });
-
-        let mailOptions = {
-            from: SMTP_EMAIL,
-            to: SMTP_EMAIL,
-            subject: subject,
-            text: `Type: ${type}\nDescription: ${description}\nOther Type: ${otherType}`,
-            attachments: [
-                {
-                    filename: file.originalname,
-                    path: file.path
-                }
-            ]
-        };
-
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
-        });
-
-        return res.status(200).json({ message: 'Mail sent' });
-    } 
-     catch (error) {
-        console.error(error)
-    return res.status(400).json({ message: 'Mail not sent' });
-
-}})
+    const { subject, type, description, otherType } = req.body;
+    const file = req.file;
+  
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: SMTP_EMAIL,
+        pass: SMTP_PASS,
+      }
+    });
+  
+    let mailOptions = {
+      from: SMTP_EMAIL,
+      to: 'partner@fixtechcare.com',
+      subject: subject,
+      text: `Type: ${type}\nDescription: ${description}\nOther Type: ${otherType}`,
+      attachments: [
+        {
+          filename: file.originalname,
+          path: file.path
+        }
+      ]
+    };
+  
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  
+    return res.status(200).json({ message: 'Mail sent' });
+  });
 
 module.exports = app
