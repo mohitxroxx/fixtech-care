@@ -260,7 +260,7 @@ app.get("/notify", auth, async (req, res) => {
     }
 })
 
-app.post('/mail', upload.single('file'), (req, res) => {
+app.post('/mail', upload.single('file'), async(req, res) => {
     const { subject, type, description, otherType } = req.body;
     const file = req.file;
   
@@ -285,15 +285,14 @@ app.post('/mail', upload.single('file'), (req, res) => {
       ]
     };
   
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-      } else {
+    try {
+        let info = await transporter.sendMail(mailOptions);
         console.log('Email sent: ' + info.response);
-      }
-    });
+    } catch (error) {
+        console.log(error);
+    }
   
     return res.status(200).json({ message: 'Mail sent' });
-  });
+});
 
 module.exports = app
