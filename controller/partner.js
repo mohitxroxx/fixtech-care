@@ -36,6 +36,7 @@ app.post('/register', async (req, res) => {
         const {
             country, category, email, fname, mname, lname, bname, contact, city, state, zip
         } = req.body
+        console.log(req.body)
 
         if (!country || !category || !email || !fname || !lname || !bname || !contact || !city || !state || !zip) {
             return res.status(400).json({ msg: 'Please fill the form completely', status: false })
@@ -122,7 +123,7 @@ app.post("/login", async (req, res) => {
         }).json({
             msg: 'Login successful',
             status: true,
-            name: user.fname
+            name:user.fname
         })
     } catch (err) {
         console.log(err)
@@ -131,9 +132,9 @@ app.post("/login", async (req, res) => {
 })
 app.get("/logout", async (req, res) => {
     try {
-        res.cookie('jwt', '', { maxAge: 0, httpOnly: false, secure: true, sameSite: 'None' });
-        res.cookie('refid', '', { maxAge: 0, httpOnly: false, secure: true, sameSite: 'None' });
-        return res.status(200).json({ msg: "User Logged out and session ended" })
+        res.clearCookie('jwt');
+        res.clearCookie('refid');
+        return res.status(200).json({msg:"User Logged out and session ended"})
     } catch (ex) {
         next(ex)
     }
@@ -168,8 +169,8 @@ app.post("/icon", auth, async (req, res) => {
 })
 app.post("/user", auth, async (req, res) => {
     try {
-        const { refid } = req.body
-        const user = await User.findOne({ refid: refid })
+        const {refid} = req.body
+        const user = await User.findOne({ refid:refid })
         return res.status(200).json(user)
     } catch (error) {
         return res.status(400).send("failed to fetch")
@@ -177,7 +178,7 @@ app.post("/user", auth, async (req, res) => {
 })
 app.patch("/user", auth, async (req, res) => {
     try {
-        const { refid, category, bname, email, fname, lname, contact, city, state, zip } = req.body;
+        const {refid,category,bname,email,fname,lname,contact,city,state,zip} = req.body;
         const user = await User.findOneAndUpdate(
             { refid: refid },
             { $set: { category, bname, email, fname, lname, contact, city, state, zip } },
@@ -218,26 +219,26 @@ app.post("/commission", auth, async (req, res) => {
     }
 })
 
-app.post('/payout', auth, async (req, res) => {
-    const { refid, paymenttype, accountName, accountNum, bankName, bankAddress, swiftCode, ifsc, mobileNum, address, paypalDetail, paymentLink } = req.body;
+app.post('/payout',auth, async (req, res) => {
+    const { refid,paymenttype, accountName, accountNum, bankName, bankAddress, swiftCode, ifsc, mobileNum, address, paypalDetail, paymentLink } = req.body;
     console.log(refid)
     try {
         const user = await User.findOneAndUpdate(
             { refid: refid },
-            {
-                $set: {
-                    paymenttype: paymenttype,
-                    accountName: accountName,
-                    accountNum: accountNum,
-                    bankName: bankName,
-                    bankAddress: bankAddress,
-                    swiftCode: swiftCode,
-                    ifsc: ifsc,
-                    mobileNum: mobileNum,
-                    address: address,
-                    paypalDetail: paypalDetail,
-                    paymentLink: paymentLink
-                }
+            { 
+                $set: { 
+                    paymenttype: paymenttype, 
+                    accountName: accountName, 
+                    accountNum: accountNum, 
+                    bankName: bankName, 
+                    bankAddress: bankAddress, 
+                    swiftCode: swiftCode, 
+                    ifsc: ifsc, 
+                    mobileNum: mobileNum, 
+                    address: address, 
+                    paypalDetail: paypalDetail, 
+                    paymentLink: paymentLink 
+                } 
             },
             { new: true, runValidators: true }
         );
@@ -262,7 +263,6 @@ app.get("/notify", auth, async (req, res) => {
         res.status(500).json({ msg: 'Cant find appropriate data', status: false })
     }
 })
-
 
 app.post('/mail', upload.single('file'), (req, res) => {
     const { subject, type, description, otherType } = req.body;
