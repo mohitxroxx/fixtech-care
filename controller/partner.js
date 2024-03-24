@@ -265,12 +265,14 @@ app.post('/mail', upload.single('file'), async(req, res) => {
     const file = req.file;
   
     let transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: SMTP_EMAIL,
-        pass: SMTP_PASS,
-      }
-    });
+        host: 'fixtechcare.com',
+        port:465,
+        secure:true,
+        auth: {
+            user: SMTP_EMAIL,
+            pass: SMTP_PASS,
+        },
+    })
   
     let mailOptions = {
       from: SMTP_EMAIL,
