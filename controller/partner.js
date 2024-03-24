@@ -76,23 +76,19 @@ app.post('/register', async (req, res) => {
                 </body>
                 </body>`,
         }
-        transporter
-            .sendMail(mailOptions)
-            .then(() => {
-                console.log("mail sent")
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        await transporter.sendMail(mailOptions);
+        console.log("mail sent");
+
         const newUser = await User.create({
             country, category, email, fname, mname, lname, bname, contact, city, state, zip, refcount: 0, refid: refcode
-        })
-        res.status(200).json({ status: true, msg: 'User registered successfully check mail for further instruction and unique refer code!' })
+        });
+
+        res.status(200).json({ status: true, msg: 'User registered successfully check mail for further instruction and unique refer code!' });
     } catch (error) {
-        console.error('Error registering user:', error)
-        res.status(500).json({ status: false, msg: 'Internal server error' })
+        console.error('Error registering user:', error);
+        res.status(500).json({ status: false, msg: 'Internal server error' });
     }
-})
+});
 
 app.post("/login", async (req, res) => {
     try {
