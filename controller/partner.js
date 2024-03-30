@@ -42,6 +42,7 @@ app.post('/register', async (req, res) => {
         }
 
         const chkuser = await User.findOne({ email })
+        console.log(chkuser)
         if (chkuser) {
             return res.status(400).json({ msg: 'Email already registered with us', status: false })
         }
@@ -82,11 +83,12 @@ app.post('/register', async (req, res) => {
             })
             .catch((err) => {
                 console.log(err)
+                return res.status(500).json({ status: false, msg: 'Error registering the user' })
             })
         const newUser = await User.create({
             country, category, email, fname, mname, lname, bname, contact, city, state, zip, refcount: 0, refid: refcode
         })
-        res.status(200).json({ status: true, msg: 'User registered successfully check mail for further instruction and unique refer code!' })
+        return res.status(200).json({ status: true, msg: 'User registered successfully check mail for further instruction and unique refer code!' })
     } catch (error) {
         console.error('Error registering user:', error)
         res.status(500).json({ status: false, msg: 'Internal server error' })
@@ -102,9 +104,9 @@ app.post("/login", async (req, res) => {
         }
 
         const user = await User.findOne({ refid: refid })
-
+        // console.log(user)
         if (!user) {
-            return res.json({ msg: 'Invalid credentials', status: false })
+            return res.status(200).json({ msg: 'Invalid credentials', status: false })
         }
         const expiresIn = rememberMe ? '7d' : '2h'
         const token = jwt.sign({ id: user._id, refid }, TOKEN_KEY, { expiresIn })
@@ -158,7 +160,7 @@ app.get("/home", auth, (req, res) => {
 //     })
 // )
 
-app.post("/icon", auth, async (req, res) => {
+app.post("/icon",upload.single('img'), async (req, res) => {
     try {
         const { email } = req.body;
         const img = req.file.path;
@@ -174,10 +176,11 @@ app.post("/icon", auth, async (req, res) => {
 app.get('/icon/:refid',async(req,res)=>{
     try {
       const refid=req.params.refid
-      const currentUser=await User.findOne({refid})
-      // console.log(currentUser.earnings)
+      const currentUser=await User.findOne({email:'fefolod112@nimadir.com'})
+      console.log(currentUser)
       return res.status(200).json({url:currentUser.icon})
     } catch (error) {
+        console.error(error)
       res.status(500).json("internal server error occured while fetching data")
     }
   })

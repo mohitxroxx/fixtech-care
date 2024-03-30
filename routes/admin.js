@@ -13,13 +13,13 @@ const auth=require('../middleware/auth')
 
 
 router.post('/login', login)
-router.get('/logout',auth, logout)
-router.post('/list',auth, list)
-router.post('/referrals',auth, referrals)
-router.post('/editreferral',auth, editreferral)
-router.post('/commission',auth, commission)
-router.post('/notify',auth, notify)
-router.get('/home',auth, home)
-router.post('/notifyall',auth, notifyall)
+router.get('/logout', logout)
+router.post('/list', list)
+router.post('/referrals', referrals)
+router.post('/editreferral', editreferral)
+router.post('/commission', commission)
+router.post('/notify', notify)
+router.get('/home', home)
+router.post('/notifyall', notifyall)
 
 module.exports = router

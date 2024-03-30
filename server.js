@@ -4,6 +4,7 @@ const session = require('express-session')
 const admin = require("./routes/admin")
 const partner = require("./routes/partner")
 const connectDB = require('./config/db')
+const cookieParser = require('cookie-parser');
 connectDB()
 
 const app=express()
@@ -13,6 +14,7 @@ app.use(cors({
   credentials:true
 }))
 app.use(express.json())
+app.use(cookieParser());
 
 app.use(
   session({
