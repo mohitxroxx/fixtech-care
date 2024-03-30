@@ -22,8 +22,8 @@ const { TOKEN_KEY, SMTP_EMAIL, SMTP_PASS } = process.env
 
 let transporter = nodemailer.createTransport({
     host: 'fixtechcare.com',
-    port:465,
-    secure:true,
+    port: 465,
+    secure: true,
     auth: {
         user: SMTP_EMAIL,
         pass: SMTP_PASS,
@@ -142,30 +142,45 @@ app.get("/home", auth, (req, res) => {
     res.status(200).send("User Logged in and Session is Active")
 })
 
-app.post("/upload", auth, async (req, res) =>
-    upload.single('image')(req, res, function (err) {
-        if (err) {
-            console.log(err)
-            return res.status(400).send("Error occured while uploading")
-        }
-        cloudinary.uploader.upload(req.file.path, function (err, result) {
-            if (err) {
-                console.log(err)
-                return res.status(500).send("Error occured with cloudinary")
-            }
-            return res.status(200).json({ msg: "Uploaded successfully", imageUrl: result.url })
-        })
-    })
-)
+// app.post("/upload", async (req, res) =>
+//     upload.single('image')(req, res, function (err) {
+//         if (err) {
+//             console.log(err)
+//             return res.status(200).send("Error occured while uploading")
+//         }
+//         cloudinary.uploader.upload(req.file.path, function (err, result) {
+//             if (err) {
+//                 console.log(err)
+//                 return res.status(500).send("Error occured with cloudinary")
+//             }
+//             return res.status(200).json({ msg: "Uploaded successfully", imageUrl: result.url })
+//         })
+//     })
+// )
 
 app.post("/icon", auth, async (req, res) => {
     try {
-        const existing = await User.findOneAndUpdate({ refid: req.cookies.refid }, { icon: req.body.icon }, { new: true })
-        return res.status(200).send("Updated Successfully")
-    } catch (error) {
-        return res.status(400).send("failed to update")
-    }
+        const { email } = req.body;
+        const img = req.file.path;
+        const cloudinaryResponse = await cloudinary.uploader.upload(img);
+        const iconUrl = cloudinaryResponse.url;
+        const updatedUser = await user.findOneAndUpdate({ email: email }, { icon: iconUrl }, { new: true });
+        res.status(200).json({ msg: 'Icon updated', iconUrl: iconUrl });
+      } catch (error) {
+        console.error(error);
+        res.status(400).json({ err: "Failed to update the icon" });
+      }
 })
+app.get('/icon/:refid',async(req,res)=>{
+    try {
+      const refid=req.params.refid
+      const currentUser=await user.findOne({refid})
+      // console.log(currentUser.earnings)
+      return res.status(200).json({url:currentUser.icon})
+    } catch (error) {
+      res.status(500).json("internal server error occured while fetching data")
+    }
+  })
 app.post("/user", auth, async (req, res) => {
     try {
         const { refid } = req.body
@@ -267,37 +282,37 @@ app.get("/notify", auth, async (req, res) => {
 app.post('/mail', upload.single('file'), (req, res) => {
     const { subject, type, description, otherType } = req.body;
     const file = req.file;
-  
+
     let transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: SMTP_EMAIL,
-        pass: SMTP_PASS,
-      }
-    });
-  
-    let mailOptions = {
-      from: SMTP_EMAIL,
-      to: 'partner@fixtechcare.com',
-      subject: subject,
-      text: `Type: ${type}\nDescription: ${description}\nOther Type: ${otherType}`,
-      attachments: [
-        {
-          filename: file.originalname,
-          path: file.path
+        service: 'gmail',
+        auth: {
+            user: SMTP_EMAIL,
+            pass: SMTP_PASS,
         }
-      ]
-    };
-  
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
     });
-  
+
+    let mailOptions = {
+        from: SMTP_EMAIL,
+        to: 'partner@fixtechcare.com',
+        subject: subject,
+        text: `Type: ${type}\nDescription: ${description}\nOther Type: ${otherType}`,
+        attachments: [
+            {
+                filename: file.originalname,
+                path: file.path
+            }
+        ]
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
     return res.status(200).json({ message: 'Mail sent' });
-  });
+});
 
 module.exports = app
