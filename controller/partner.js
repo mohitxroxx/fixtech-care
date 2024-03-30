@@ -164,7 +164,7 @@ app.post("/icon", auth, async (req, res) => {
         const img = req.file.path;
         const cloudinaryResponse = await cloudinary.uploader.upload(img);
         const iconUrl = cloudinaryResponse.url;
-        const updatedUser = await user.findOneAndUpdate({ email: email }, { icon: iconUrl }, { new: true });
+        const updatedUser = await User.findOneAndUpdate({ email: email }, { icon: iconUrl }, { new: true });
         res.status(200).json({ msg: 'Icon updated', iconUrl: iconUrl });
       } catch (error) {
         console.error(error);
@@ -174,7 +174,7 @@ app.post("/icon", auth, async (req, res) => {
 app.get('/icon/:refid',async(req,res)=>{
     try {
       const refid=req.params.refid
-      const currentUser=await user.findOne({refid})
+      const currentUser=await User.findOne({refid})
       // console.log(currentUser.earnings)
       return res.status(200).json({url:currentUser.icon})
     } catch (error) {
@@ -284,13 +284,17 @@ app.post('/mail', upload.single('file'), (req, res) => {
     const file = req.file;
 
     let transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'fixtechcare.com',
+        port:465,
+        secure:true,
+        port: 465,
+        secure: true,
         auth: {
             user: SMTP_EMAIL,
             pass: SMTP_PASS,
-        }
-    });
-
+        },
+    })
+    
     let mailOptions = {
         from: SMTP_EMAIL,
         to: 'partner@fixtechcare.com',
