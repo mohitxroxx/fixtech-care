@@ -104,7 +104,7 @@ app.post("/login", async (req, res) => {
         }
 
         const user = await User.findOne({ refid: refid })
-        // console.log(user)
+        console.log(user)
         if (!user) {
             return res.status(200).json({ msg: 'Invalid credentials', status: false })
         }
@@ -160,23 +160,23 @@ app.get("/home", auth, (req, res) => {
 //     })
 // )
 
-app.post("/icon",upload.single('img'), async (req, res) => {
+app.post("/icon",auth,upload.single('img'), async (req, res) => {
     try {
-        const { email } = req.body;
+        const refid = req.user.refid
         const img = req.file.path;
         const cloudinaryResponse = await cloudinary.uploader.upload(img);
         const iconUrl = cloudinaryResponse.url;
-        const updatedUser = await User.findOneAndUpdate({ email: email }, { icon: iconUrl }, { new: true });
+        const updatedUser = await User.findOneAndUpdate({ refid }, { icon: iconUrl }, { new: true });
         res.status(200).json({ msg: 'Icon updated', iconUrl: iconUrl });
       } catch (error) {
         console.error(error);
         res.status(400).json({ err: "Failed to update the icon" });
       }
 })
-app.get('/icon/:refid',async(req,res)=>{
+app.get('/icon',auth,async(req,res)=>{
     try {
-      const refid=req.params.refid
-      const currentUser=await User.findOne({email:'fefolod112@nimadir.com'})
+        const refid = req.user.refid
+      const currentUser=await User.findOne({ refid })
       console.log(currentUser)
       return res.status(200).json({url:currentUser.icon})
     } catch (error) {
