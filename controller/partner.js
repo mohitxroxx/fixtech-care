@@ -183,7 +183,7 @@ app.get('/icon',auth,async(req,res)=>{
         console.error(error)
       res.status(500).json("internal server error occured while fetching data")
     }
-  })
+})
 app.post("/user", auth, async (req, res) => {
     try {
         const { refid } = req.body
