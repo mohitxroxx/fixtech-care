@@ -42,7 +42,7 @@ app.post('/register', async (req, res) => {
         }
 
         const chkuser = await User.findOne({ email })
-        console.log(chkuser)
+        // console.log(chkuser)
         if (chkuser) {
             return res.status(400).json({ msg: 'Email already registered with us', status: false })
         }
@@ -76,7 +76,7 @@ app.post('/register', async (req, res) => {
                 </body>
                 </body>`,
         }
-        transporter
+        await transporter
             .sendMail(mailOptions)
             .then(() => {
                 console.log("mail sent")
